@@ -1,0 +1,67 @@
+---
+title: API Reference
+description: Trevora Backend REST API — autentikasi, wallet, pembayaran, top-up, withdraw, dan webhook SayaBayar.
+---
+
+# Trevora API Reference
+
+Trevora Backend berfungsi sebagai **Backend for Frontend (BFF)** antara aplikasi Flutter dan SayaBayar API. Seluruh komunikasi dengan SayaBayar dilakukan oleh backend — **API key SayaBayar tidak pernah dikirim atau disimpan di aplikasi Flutter**.
+
+## Base URL
+
+```
+https://api.trevora.com
+```
+
+Semua endpoint diawali dengan `/api/v1`.
+
+## Autentikasi
+
+Sebagian besar endpoint memerlukan **JWT access token** pada header:
+
+```
+Authorization: Bearer <access_token>
+```
+
+Dapatkan token lewat [Register](/api-reference#register) atau [Login](/api-reference#login). Backend mengambil `user_id` dari JWT, sehingga frontend tidak perlu mengirimkannya.
+
+## Modul
+
+| Modul | Endpoint utama |
+| ----- | -------------- |
+| **Auth** | register, login, refresh, logout, me |
+| **Wallet** | saldo, transaksi, top-ups |
+| **Payments** | buat/daftar/detail invoice SayaBayar |
+| **Withdraws** | inquiry bank, transfer, daftar/detail |
+| **Banks** | daftar bank & e-wallet |
+| **Webhooks** | callback SayaBayar (`invoice.paid`, dll) |
+| **SSE** | stream status real-time per payment/top-up |
+
+## Format respons
+
+Respons sukses:
+
+```json
+{ "success": true, "data": { } }
+```
+
+Respons paginasi menyertakan `meta`:
+
+```json
+{
+  "success": true,
+  "data": [ ],
+  "meta": { "page": 1, "per_page": 20, "total": 8, "total_pages": 1 }
+}
+```
+
+Respons error:
+
+```json
+{
+  "success": false,
+  "error": { "code": "VALIDATION_ERROR", "message": "..." }
+}
+```
+
+Jelajahi setiap endpoint di grup **API Reference** pada navigasi.
