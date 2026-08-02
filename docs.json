@@ -17,7 +17,7 @@
       },
       {
         "group": "Basic API",
-        "icon": "key-round",
+        "icon": "key",
         "openapi": "api-reference/basic.json"
       },
       {
