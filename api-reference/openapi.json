@@ -3279,10 +3279,3455 @@
           }
         }
       }
+    },
+    "/v1/booking/flight-orders": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Create flight order (Amadeus Flight Create Orders)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/amadeus.CreateOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/amadeus.FlightOrder"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/booking/flight-orders/{flightOrderId}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Get flight order (Amadeus Flight Order Management)",
+        "parameters": [
+          {
+            "name": "flightOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/amadeus.FlightOrder"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Cancel flight order (Amadeus Flight Order Management)",
+        "parameters": [
+          {
+            "name": "flightOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/e-reputation/hotel-sentiments": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel ratings / sentiments (Amadeus Hotel Ratings)",
+        "parameters": [
+          {
+            "name": "hotelIds",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated hotel IDs (max 3)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/hotel.SentimentResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/location/analytics/category-rated-areas": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "market-insights"
+        ],
+        "summary": "Location score (Amadeus Location Score)",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Latitude"
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Longitude"
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Radius in KM (default 1)"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "sightseeing, restaurant, shopping, nightlife"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/locations.LocationResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/ordering/transfer-orders": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ],
+        "summary": "Transfer booking (Amadeus Transfer Booking)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transfer.OrderRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "transferOfferId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Offer ID from transfer search"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/transfer.Order"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/ordering/transfer-orders/{transferOrderId}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ],
+        "summary": "Transfer order detail (Amadeus Transfer Management)",
+        "parameters": [
+          {
+            "name": "transferOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transfer order ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/transfer.Order"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/ordering/transfer-orders/{transferOrderId}/transfers/cancellation": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ],
+        "summary": "Cancel transfer order (Amadeus Transfer Management)",
+        "parameters": [
+          {
+            "name": "transferOrderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transfer order ID"
+          },
+          {
+            "name": "confirmNbr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Confirmation number"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/airlines": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "locations"
+        ],
+        "summary": "Airline lookup by IATA codes (Amadeus Airline Code Lookup)",
+        "parameters": [
+          {
+            "name": "airlineCodes",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated IATA airline codes (max 3)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/locations.AirlineResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/locations": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "locations"
+        ],
+        "summary": "Airport & city search (Amadeus Airport & City Search)",
+        "parameters": [
+          {
+            "name": "subType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "AIRPORT or CITY (comma-separated accepted)"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search keyword"
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISO country code"
+          },
+          {
+            "name": "page[limit]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size (max 100)"
+          },
+          {
+            "name": "page[offset]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page offset"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Sort, e.g. analytics.travelers.score"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/locations.LocationResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/locations/hotels/by-city": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel list by city (Amadeus Hotel List)",
+        "parameters": [
+          {
+            "name": "cityCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "City IATA code"
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Search radius"
+          },
+          {
+            "name": "radiusUnit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "KM or MILE"
+          },
+          {
+            "name": "hotelSource",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hotel source (default ALL)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/hotel.HotelSummary"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/locations/hotels/by-geocode": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel list by geocode (Amadeus Hotel List)",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Latitude"
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Longitude"
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Search radius (default 5)"
+          },
+          {
+            "name": "radiusUnit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "KM or MILE"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/hotel.HotelSummary"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/locations/hotels/by-hotels": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel list by IDs (Amadeus Hotel List)",
+        "parameters": [
+          {
+            "name": "hotelIds",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated hotel IDs (max 200)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/hotel.HotelSummary"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reference-data/locations/{locationId}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "locations"
+        ],
+        "summary": "Airport & city information by ID (Amadeus Airport & City Search by ID)",
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "IATA location code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/locations.LocationResponse"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/activities": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "activities"
+        ],
+        "summary": "Tours & activities search (Amadeus Tours and Activities)",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Latitude (with longitude & radius)"
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Longitude (with latitude & radius)"
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Radius in KM (default 1)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/activity.Activity"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/activities/by-square": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "activities"
+        ],
+        "summary": "Tours & activities search by bounding box (Amadeus Tours and Activities)",
+        "parameters": [
+          {
+            "name": "north",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "North latitude"
+          },
+          {
+            "name": "west",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "West longitude"
+          },
+          {
+            "name": "south",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "South latitude"
+          },
+          {
+            "name": "east",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "East longitude"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/activity.Activity"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/activities/{activityId}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "activities"
+        ],
+        "summary": "Activity detail (Amadeus Tours and Activities)",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Activity ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/activity.Activity"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/flight-offers/pricing": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Price flight offers (Amadeus Flight Offers Price)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/amadeus.PricingRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Additional services to include"
+          },
+          {
+            "name": "forceClass",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Force pricing class"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/amadeus.FlightOffer"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/seatmaps": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Seat map display (Amadeus SeatMap Display)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/amadeus.SeatmapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/amadeus.Seatmap"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/shopping/transfer-offers": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "transfers"
+        ],
+        "summary": "Transfer search (Amadeus Transfer Search)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transfer.SearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/transfer.Offer"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/travel/analytics/air-traffic/booked": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "market-insights"
+        ],
+        "summary": "Most booked destinations (Amadeus Travel Recommendations - booked)",
+        "parameters": [
+          {
+            "name": "originCityCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Origin city IATA code"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Period YYYY-MM"
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ARRIVING or DEPARTING"
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/locations.LocationResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/travel/analytics/air-traffic/traveled": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "market-insights"
+        ],
+        "summary": "Most traveled destinations (Amadeus Travel Recommendations - traveled)",
+        "parameters": [
+          {
+            "name": "originCityCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Origin city IATA code"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Period YYYY-MM"
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/locations.LocationResponse"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/travel/predictions/trip-purpose": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "trip"
+        ],
+        "summary": "Trip purpose prediction (Amadeus Trip Purpose Prediction)",
+        "parameters": [
+          {
+            "name": "originLocationCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Origin IATA code"
+          },
+          {
+            "name": "destinationLocationCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Destination IATA code"
+          },
+          {
+            "name": "departureDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "returnDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "searchDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/trip.TripPurposeResponse"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/booking/hotel-orders": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Create hotel booking (Amadeus Hotel Booking)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/hotel.BookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/hotel.HotelOrder"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/shopping/flight-offers": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Search flight offers (Amadeus Flight Offers Search)",
+        "parameters": [
+          {
+            "name": "originLocationCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Origin IATA code"
+          },
+          {
+            "name": "destinationLocationCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Destination IATA code"
+          },
+          {
+            "name": "departureDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "returnDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "adults",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of adults"
+          },
+          {
+            "name": "children",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of children"
+          },
+          {
+            "name": "infants",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of infants"
+          },
+          {
+            "name": "travelClass",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST"
+          },
+          {
+            "name": "nonStop",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Non-stop only"
+          },
+          {
+            "name": "currencyCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Price currency"
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max price per traveler"
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Max offers (default 10, max 250)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/amadeus.FlightOffer"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/shopping/flight-offers/prediction": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "flight"
+        ],
+        "summary": "Flight choice prediction (Amadeus Flight Choice Prediction)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/amadeus.SeatmapRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/amadeus.FlightOffer"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/shopping/hotel-offers": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel offers search (Amadeus Hotel Search)",
+        "parameters": [
+          {
+            "name": "hotelIds",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated hotel IDs (max 50)"
+          },
+          {
+            "name": "adults",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Adults per room"
+          },
+          {
+            "name": "checkInDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "checkOutDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "name": "paymentPolicy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Payment policy filter"
+          },
+          {
+            "name": "roomQuantity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of rooms"
+          },
+          {
+            "name": "priceRange",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Price range filter, e.g. 100-300"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Price currency"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/hotel.HotelOffer"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/shopping/hotel-offers/{offerId}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "hotel"
+        ],
+        "summary": "Hotel offer detail (Amadeus Hotel Search)",
+        "parameters": [
+          {
+            "name": "offerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Offer ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/hotel.HotelOffer"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "activity.Activity": {
+        "type": "object",
+        "properties": {
+          "bookingLink": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "geoCode": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "minimumDuration": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pictures": {
+            "type": "object"
+          },
+          "price": {
+            "type": "object"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AircraftInfo": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Amenities": {
+        "type": "object",
+        "properties": {
+          "power": {
+            "$ref": "#/components/schemas/amadeus.AmenityPower"
+          },
+          "seat": {
+            "$ref": "#/components/schemas/amadeus.AmenitySeat"
+          },
+          "wifi": {
+            "$ref": "#/components/schemas/amadeus.AmenityWiFi"
+          }
+        }
+      },
+      "amadeus.AmenityPower": {
+        "type": "object",
+        "properties": {
+          "isChargeable": {
+            "type": "boolean"
+          },
+          "powerType": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AmenitySeat": {
+        "type": "object",
+        "properties": {
+          "legSpace": {
+            "type": "integer"
+          },
+          "medias": {
+            "type": "string"
+          },
+          "spaceUnit": {
+            "type": "string"
+          },
+          "tilt": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AmenityWiFi": {
+        "type": "object",
+        "properties": {
+          "isChargeable": {
+            "type": "boolean"
+          },
+          "wifiCoverage": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CheckedBags": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "weightUnit": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Contact": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/amadeus.PostalAddress"
+          },
+          "addresseeName": {
+            "$ref": "#/components/schemas/amadeus.Name"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "phones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Phone"
+            }
+          },
+          "purpose": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CreateOrderData": {
+        "type": "object",
+        "required": [
+          "flightOffers",
+          "travelers",
+          "type"
+        ],
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Contact"
+            }
+          },
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "remarks": {
+            "$ref": "#/components/schemas/amadeus.Remarks"
+          },
+          "ticketingAgreement": {
+            "$ref": "#/components/schemas/amadeus.TicketingAgreement"
+          },
+          "travelers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Traveler"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CreateOrderRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.CreateOrderData"
+          }
+        }
+      },
+      "amadeus.Deck": {
+        "type": "object",
+        "properties": {
+          "deckConfiguration": {
+            "$ref": "#/components/schemas/amadeus.DeckConfig"
+          },
+          "deckType": {
+            "type": "string"
+          },
+          "seats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.SeatInfo"
+            }
+          }
+        }
+      },
+      "amadeus.DeckConfig": {
+        "type": "object",
+        "properties": {
+          "endSeatRow": {
+            "type": "integer"
+          },
+          "endWingsRow": {
+            "type": "integer"
+          },
+          "endWingsX": {
+            "type": "integer"
+          },
+          "exitRowsX": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "length": {
+            "type": "integer"
+          },
+          "startSeatRow": {
+            "type": "integer"
+          },
+          "startWingsRow": {
+            "type": "integer"
+          },
+          "startWingsX": {
+            "type": "integer"
+          },
+          "width": {
+            "type": "integer"
+          }
+        }
+      },
+      "amadeus.Document": {
+        "type": "object",
+        "properties": {
+          "birthPlace": {
+            "type": "string"
+          },
+          "documentType": {
+            "type": "string"
+          },
+          "expiryDate": {
+            "type": "string"
+          },
+          "holder": {
+            "type": "boolean"
+          },
+          "issuanceCountry": {
+            "type": "string"
+          },
+          "issuanceDate": {
+            "type": "string"
+          },
+          "issuanceLocation": {
+            "type": "string"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Endpoint": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "terminal": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.FareDetail": {
+        "type": "object",
+        "properties": {
+          "brandedFare": {
+            "type": "string"
+          },
+          "cabin": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "fareBasis": {
+            "type": "string"
+          },
+          "includedCheckedBags": {
+            "$ref": "#/components/schemas/amadeus.CheckedBags"
+          },
+          "segmentId": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Fee": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.FlightOffer": {
+        "type": "object",
+        "properties": {
+          "choiceProbability": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instantTicketingRequired": {
+            "type": "boolean"
+          },
+          "itineraries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Itinerary"
+            }
+          },
+          "lastTicketingDate": {
+            "type": "string"
+          },
+          "nonHomogeneous": {
+            "type": "boolean"
+          },
+          "numberOfBookableSeats": {
+            "type": "integer"
+          },
+          "oneWay": {
+            "type": "boolean"
+          },
+          "price": {
+            "$ref": "#/components/schemas/amadeus.OfferPrice"
+          },
+          "pricingOptions": {
+            "$ref": "#/components/schemas/amadeus.PricingOptions"
+          },
+          "source": {
+            "type": "string"
+          },
+          "travelerPricings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.TravelerPricing"
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "validatingAirlineCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "amadeus.FlightOrder": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Contact"
+            }
+          },
+          "flightOffers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "queuingOfficeId": {
+            "type": "string"
+          },
+          "remarks": {
+            "$ref": "#/components/schemas/amadeus.Remarks"
+          },
+          "travelers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Traveler"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.GeneralRemark": {
+        "type": "object",
+        "properties": {
+          "subType": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Itinerary": {
+        "type": "object",
+        "properties": {
+          "duration": {
+            "type": "string"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Segment"
+            }
+          }
+        }
+      },
+      "amadeus.Money": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Name": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.OfferPrice": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Fee"
+            }
+          },
+          "grandTotal": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.OperatingInfo": {
+        "type": "object",
+        "properties": {
+          "carrierCode": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Phone": {
+        "type": "object",
+        "properties": {
+          "countryCallingCode": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.PostalAddress": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "postalBox": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "stateName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.PricingOptions": {
+        "type": "object",
+        "properties": {
+          "fareType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includedCheckedBagsOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "amadeus.PricingRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.PricingRequestData"
+          }
+        }
+      },
+      "amadeus.PricingRequestData": {
+        "type": "object",
+        "required": [
+          "flightOffers",
+          "type"
+        ],
+        "properties": {
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Remarks": {
+        "type": "object",
+        "properties": {
+          "general": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.GeneralRemark"
+            }
+          }
+        }
+      },
+      "amadeus.SeatCoordinate": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          }
+        }
+      },
+      "amadeus.SeatInfo": {
+        "type": "object",
+        "properties": {
+          "cabin": {
+            "type": "string"
+          },
+          "characteristicsCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/amadeus.SeatCoordinate"
+          },
+          "number": {
+            "type": "string"
+          },
+          "travelerPricing": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.SeatPricing"
+            }
+          }
+        }
+      },
+      "amadeus.SeatPricing": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "$ref": "#/components/schemas/amadeus.Money"
+          },
+          "seatAvailabilityStatus": {
+            "type": "string"
+          },
+          "travelerId": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Seatmap": {
+        "type": "object",
+        "properties": {
+          "aircraft": {
+            "$ref": "#/components/schemas/amadeus.AircraftInfo"
+          },
+          "aircraftCabinAmenities": {
+            "$ref": "#/components/schemas/amadeus.Amenities"
+          },
+          "arrival": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "carrierCode": {
+            "type": "string"
+          },
+          "decks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Deck"
+            }
+          },
+          "departure": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "flightOfferId": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "segmentId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.SeatmapRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.SeatmapRequestData"
+          }
+        }
+      },
+      "amadeus.SeatmapRequestData": {
+        "type": "object",
+        "required": [
+          "flightOffers"
+        ],
+        "properties": {
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Segment": {
+        "type": "object",
+        "properties": {
+          "aircraft": {
+            "$ref": "#/components/schemas/amadeus.AircraftInfo"
+          },
+          "arrival": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "blacklistedInEU": {
+            "type": "boolean"
+          },
+          "carrierCode": {
+            "type": "string"
+          },
+          "departure": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "numberOfStops": {
+            "type": "integer"
+          },
+          "operating": {
+            "$ref": "#/components/schemas/amadeus.OperatingInfo"
+          }
+        }
+      },
+      "amadeus.TicketingAgreement": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string"
+          },
+          "delay": {
+            "type": "string"
+          },
+          "option": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Traveler": {
+        "type": "object",
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/amadeus.Contact"
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Document"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/amadeus.TravelerName"
+          }
+        }
+      },
+      "amadeus.TravelerName": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.TravelerPricing": {
+        "type": "object",
+        "properties": {
+          "fareDetailsBySegment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FareDetail"
+            }
+          },
+          "fareOption": {
+            "type": "string"
+          },
+          "price": {
+            "$ref": "#/components/schemas/amadeus.Money"
+          },
+          "travelerId": {
+            "type": "string"
+          },
+          "travelerType": {
+            "type": "string"
+          }
+        }
+      },
       "auth.RefreshTokenRequest": {
         "type": "object",
         "required": [
@@ -3777,6 +7222,476 @@
           "StatusUnhealthy"
         ]
       },
+      "hotel.AssociatedRecord": {
+        "type": "object",
+        "properties": {
+          "originSystemCode": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.BookingData": {
+        "type": "object",
+        "required": [
+          "guests",
+          "offerId"
+        ],
+        "properties": {
+          "guests": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/hotel.Guest"
+            }
+          },
+          "offerId": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.Payment"
+            }
+          },
+          "rooms": {
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.BookingRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/hotel.BookingData"
+          }
+        }
+      },
+      "hotel.Contact": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Description": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.GeoCode": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          }
+        }
+      },
+      "hotel.Guest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/hotel.Contact"
+          },
+          "name": {
+            "$ref": "#/components/schemas/hotel.GuestName"
+          },
+          "tid": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.GuestName": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelOffer": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "hotel": {
+            "$ref": "#/components/schemas/hotel.HotelSummary"
+          },
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.Offer"
+            }
+          },
+          "self": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelOrder": {
+        "type": "object",
+        "properties": {
+          "associatedRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.AssociatedRecord"
+            }
+          },
+          "bookingStatus": {
+            "type": "string"
+          },
+          "guests": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "hotel": {
+            "$ref": "#/components/schemas/hotel.HotelSummary"
+          },
+          "hotelOffer": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelSummary": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "object"
+          },
+          "chainCode": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "object"
+          },
+          "dupeId": {
+            "type": "integer"
+          },
+          "geoCode": {
+            "$ref": "#/components/schemas/hotel.GeoCode"
+          },
+          "hotelId": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "lastUpdate": {
+            "type": "string"
+          },
+          "masterChainCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Offer": {
+        "type": "object",
+        "properties": {
+          "checkInDate": {
+            "type": "string"
+          },
+          "checkOutDate": {
+            "type": "string"
+          },
+          "guests": {
+            "$ref": "#/components/schemas/hotel.OfferGuests"
+          },
+          "id": {
+            "type": "string"
+          },
+          "policies": {
+            "$ref": "#/components/schemas/hotel.Policies"
+          },
+          "price": {
+            "$ref": "#/components/schemas/hotel.OfferPrice"
+          },
+          "rateCode": {
+            "type": "string"
+          },
+          "room": {
+            "$ref": "#/components/schemas/hotel.RoomInfo"
+          }
+        }
+      },
+      "hotel.OfferGuests": {
+        "type": "object",
+        "properties": {
+          "adults": {
+            "type": "integer"
+          }
+        }
+      },
+      "hotel.OfferPrice": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Payment": {
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/hotel.PaymentCard"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "method": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.PaymentCard": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "expiryDate": {
+            "type": "string"
+          },
+          "holderName": {
+            "type": "string"
+          },
+          "vendorCode": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Policies": {
+        "type": "object",
+        "properties": {
+          "paymentType": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.RoomInfo": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/hotel.Description"
+          },
+          "type": {
+            "type": "string"
+          },
+          "typeEstimated": {
+            "$ref": "#/components/schemas/hotel.TypeEst"
+          }
+        }
+      },
+      "hotel.SentimentResponse": {
+        "type": "object",
+        "properties": {
+          "hotelId": {
+            "type": "string"
+          },
+          "numberOfReviews": {
+            "type": "integer"
+          },
+          "overall": {
+            "type": "integer"
+          },
+          "sentiment": {
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.TypeEst": {
+        "type": "object",
+        "properties": {
+          "bedType": {
+            "type": "string"
+          },
+          "beds": {
+            "type": "integer"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.AirlineResponse": {
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string"
+          },
+          "commonName": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "icaoCode": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationAddress": {
+        "type": "object",
+        "properties": {
+          "cityCode": {
+            "type": "string"
+          },
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "countryName": {
+            "type": "string"
+          },
+          "regionCode": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationGeoCode": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          }
+        }
+      },
+      "locations.LocationResponse": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/locations.LocationAddress"
+          },
+          "analytics": {
+            "type": "object"
+          },
+          "detailedName": {
+            "type": "string"
+          },
+          "geoCode": {
+            "$ref": "#/components/schemas/locations.LocationGeoCode"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "number"
+          },
+          "self": {
+            "$ref": "#/components/schemas/locations.LocationSelf"
+          },
+          "subType": {
+            "type": "string"
+          },
+          "timeZoneOffset": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationSelf": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "sayabayar.Bank": {
         "type": "object",
         "properties": {
@@ -3804,6 +7719,379 @@
             "type": "string"
           },
           "bank_code": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Address": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "line": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Agency": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.Contacts"
+            }
+          }
+        }
+      },
+      "transfer.ConnectedSegment": {
+        "type": "object",
+        "properties": {
+          "arrival": {
+            "$ref": "#/components/schemas/transfer.SegmentEndpoint"
+          },
+          "departure": {
+            "$ref": "#/components/schemas/transfer.SegmentEndpoint"
+          },
+          "transportationNumber": {
+            "type": "string"
+          },
+          "transportationType": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Contacts": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Offer": {
+        "type": "object",
+        "properties": {
+          "distance": {
+            "type": "object"
+          },
+          "end": {
+            "type": "object"
+          },
+          "extraServices": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "passengerCharacteristics": {
+            "type": "object"
+          },
+          "quotation": {
+            "type": "object"
+          },
+          "serviceProvider": {
+            "type": "object"
+          },
+          "start": {
+            "type": "object"
+          },
+          "stops": {
+            "type": "object"
+          },
+          "transferType": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "object"
+          }
+        }
+      },
+      "transfer.Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.OrderTransfer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderData": {
+        "type": "object",
+        "required": [
+          "passengers"
+        ],
+        "properties": {
+          "agency": {
+            "$ref": "#/components/schemas/transfer.Agency"
+          },
+          "flightNumber": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "passengers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/transfer.OrderPassenger"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderPassenger": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/transfer.Contacts"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/transfer.OrderData"
+          }
+        }
+      },
+      "transfer.OrderTransfer": {
+        "type": "object",
+        "properties": {
+          "confirmNbr": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "object"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "end": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "quotation": {
+            "type": "object"
+          },
+          "start": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "object"
+          }
+        }
+      },
+      "transfer.PassengerCharacteristic": {
+        "type": "object",
+        "properties": {
+          "age": {
+            "type": "integer"
+          },
+          "passengerTypeCode": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.SearchRequest": {
+        "type": "object",
+        "required": [
+          "passengers",
+          "startDateTime",
+          "startLocationCode",
+          "transferType"
+        ],
+        "properties": {
+          "endAddress": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "endCityName": {
+            "type": "string"
+          },
+          "endConnectedSegment": {
+            "$ref": "#/components/schemas/transfer.ConnectedSegment"
+          },
+          "endCountryCode": {
+            "type": "string"
+          },
+          "endGeoCode": {
+            "type": "string"
+          },
+          "endLocationCode": {
+            "type": "string"
+          },
+          "endName": {
+            "type": "string"
+          },
+          "endZipCode": {
+            "type": "string"
+          },
+          "passengerCharacteristics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.PassengerCharacteristic"
+            }
+          },
+          "passengers": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "providerCodes": {
+            "type": "string"
+          },
+          "startConnectedSegment": {
+            "$ref": "#/components/schemas/transfer.ConnectedSegment"
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "startLocationCode": {
+            "type": "string"
+          },
+          "stopOvers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.StopOver"
+            }
+          },
+          "transferType": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.SegmentEndpoint": {
+        "type": "object",
+        "properties": {
+          "localDateTime": {
+            "type": "string"
+          },
+          "locationCode": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.StopOver": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "locationCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sequenceNumber": {
+            "type": "integer"
+          }
+        }
+      },
+      "trip.Analytics": {
+        "type": "object",
+        "properties": {
+          "confidence": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          }
+        }
+      },
+      "trip.Links": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "string"
+          }
+        }
+      },
+      "trip.TripPurposeResponse": {
+        "type": "object",
+        "properties": {
+          "analytics": {
+            "$ref": "#/components/schemas/trip.Analytics"
+          },
+          "links": {
+            "$ref": "#/components/schemas/trip.Links"
+          },
+          "result": {
+            "type": "string"
+          },
+          "subType": {
+            "type": "string"
+          },
+          "type": {
             "type": "string"
           }
         }
