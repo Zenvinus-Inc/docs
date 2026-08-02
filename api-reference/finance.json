@@ -1,0 +1,4043 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Finance API Reference",
+    "version": "1.0.0",
+    "description": "Reference documentation for finance endpoints"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    },
+    {
+      "url": "https://api.trevora.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/banks": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get supported disbursement channels from SayaBayar",
+        "tags": [
+          "withdraws"
+        ],
+        "summary": "List banks and e-wallets",
+        "responses": {
+          "200": {
+            "description": "Banks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/sayabayar.Bank"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Provider or server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payments/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a payment by ID; refreshes live status from SayaBayar when pending",
+        "tags": [
+          "payments"
+        ],
+        "summary": "Get payment detail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Payment ID (UUID)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.Payment"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payments/{id}/events": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Server-Sent Events stream of a payment's status. Sends the current status immediately, then live updates as SayaBayar webhooks are processed. The stream closes when the status becomes final.",
+        "tags": [
+          "payments"
+        ],
+        "summary": "Stream payment status (SSE)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Payment ID (UUID)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "event stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wallet/topups": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "List the authenticated user's top-ups",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "List wallet top-ups",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Top-ups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/finance.WalletTopup"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a top-up invoice via SayaBayar; the wallet is credited when paid",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "Create a wallet top-up",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/finance.CreateTopupRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created top-up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.WalletTopup"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Provider or server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wallet/topups/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a wallet top-up by ID",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "Get top-up detail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Top-up ID (UUID)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Top-up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.WalletTopup"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wallet/topups/{id}/events": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Server-Sent Events stream of a top-up's status, driven by the same payment reconciliation as webhooks. The stream closes when the status becomes final.",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "Stream top-up status (SSE)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Top-up ID (UUID)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "event stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wallet/transactions": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "List the authenticated user's wallet ledger, optionally filtered by type",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "List wallet transactions",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by type (TOPUP, WITHDRAW, PAYMENT, REFUND, ADJUSTMENT)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/finance.WalletTransaction"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/withdraws/inquiry": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Resolve an account number to its account holder name via SayaBayar",
+        "tags": [
+          "withdraws"
+        ],
+        "summary": "Bank account inquiry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/finance.InquiryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resolved account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/sayabayar.Inquiry"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Provider or server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/withdraws/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a withdrawal by ID; refreshes live status from SayaBayar when in-flight",
+        "tags": [
+          "withdraws"
+        ],
+        "summary": "Get withdrawal detail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Withdrawal ID (UUID)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Withdrawal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.Withdraw"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/payments": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "List the authenticated user's payments, optionally filtered by status",
+        "tags": [
+          "payments"
+        ],
+        "summary": "List payments",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by status (pending, paid, failed, expired, cancelled)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/finance.Payment"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a payment invoice via SayaBayar for the authenticated user",
+        "tags": [
+          "payments"
+        ],
+        "summary": "Create a payment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/finance.CreatePaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created payment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.Payment"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Provider or server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wallet": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get the authenticated user's wallet (created on first access)",
+        "tags": [
+          "wallet"
+        ],
+        "summary": "Get wallet balance",
+        "responses": {
+          "200": {
+            "description": "Wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.Wallet"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/withdraws": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "List the authenticated user's withdrawals",
+        "tags": [
+          "withdraws"
+        ],
+        "summary": "List withdrawals",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Withdrawals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/finance.Withdraw"
+                          }
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Debit the wallet (amount + fee) and disburse to a bank/e-wallet via SayaBayar",
+        "tags": [
+          "withdraws"
+        ],
+        "summary": "Create a withdrawal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/finance.WithdrawRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created withdrawal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/finance.Withdraw"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or insufficient balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Provider or server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/errors.Response"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "error": {
+                          "$ref": "#/components/schemas/errors.ErrorInfo"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "activity.Activity": {
+        "type": "object",
+        "properties": {
+          "bookingLink": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "geoCode": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "minimumDuration": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pictures": {
+            "type": "object"
+          },
+          "price": {
+            "type": "object"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AircraftInfo": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Amenities": {
+        "type": "object",
+        "properties": {
+          "power": {
+            "$ref": "#/components/schemas/amadeus.AmenityPower"
+          },
+          "seat": {
+            "$ref": "#/components/schemas/amadeus.AmenitySeat"
+          },
+          "wifi": {
+            "$ref": "#/components/schemas/amadeus.AmenityWiFi"
+          }
+        }
+      },
+      "amadeus.AmenityPower": {
+        "type": "object",
+        "properties": {
+          "isChargeable": {
+            "type": "boolean"
+          },
+          "powerType": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AmenitySeat": {
+        "type": "object",
+        "properties": {
+          "legSpace": {
+            "type": "integer"
+          },
+          "medias": {
+            "type": "string"
+          },
+          "spaceUnit": {
+            "type": "string"
+          },
+          "tilt": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.AmenityWiFi": {
+        "type": "object",
+        "properties": {
+          "isChargeable": {
+            "type": "boolean"
+          },
+          "wifiCoverage": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CheckedBags": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "integer"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "weightUnit": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Contact": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/amadeus.PostalAddress"
+          },
+          "addresseeName": {
+            "$ref": "#/components/schemas/amadeus.Name"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "phones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Phone"
+            }
+          },
+          "purpose": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CreateOrderData": {
+        "type": "object",
+        "required": [
+          "flightOffers",
+          "travelers",
+          "type"
+        ],
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Contact"
+            }
+          },
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "remarks": {
+            "$ref": "#/components/schemas/amadeus.Remarks"
+          },
+          "ticketingAgreement": {
+            "$ref": "#/components/schemas/amadeus.TicketingAgreement"
+          },
+          "travelers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Traveler"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.CreateOrderRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.CreateOrderData"
+          }
+        }
+      },
+      "amadeus.Deck": {
+        "type": "object",
+        "properties": {
+          "deckConfiguration": {
+            "$ref": "#/components/schemas/amadeus.DeckConfig"
+          },
+          "deckType": {
+            "type": "string"
+          },
+          "seats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.SeatInfo"
+            }
+          }
+        }
+      },
+      "amadeus.DeckConfig": {
+        "type": "object",
+        "properties": {
+          "endSeatRow": {
+            "type": "integer"
+          },
+          "endWingsRow": {
+            "type": "integer"
+          },
+          "endWingsX": {
+            "type": "integer"
+          },
+          "exitRowsX": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "length": {
+            "type": "integer"
+          },
+          "startSeatRow": {
+            "type": "integer"
+          },
+          "startWingsRow": {
+            "type": "integer"
+          },
+          "startWingsX": {
+            "type": "integer"
+          },
+          "width": {
+            "type": "integer"
+          }
+        }
+      },
+      "amadeus.Document": {
+        "type": "object",
+        "properties": {
+          "birthPlace": {
+            "type": "string"
+          },
+          "documentType": {
+            "type": "string"
+          },
+          "expiryDate": {
+            "type": "string"
+          },
+          "holder": {
+            "type": "boolean"
+          },
+          "issuanceCountry": {
+            "type": "string"
+          },
+          "issuanceDate": {
+            "type": "string"
+          },
+          "issuanceLocation": {
+            "type": "string"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Endpoint": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "terminal": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.FareDetail": {
+        "type": "object",
+        "properties": {
+          "brandedFare": {
+            "type": "string"
+          },
+          "cabin": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "fareBasis": {
+            "type": "string"
+          },
+          "includedCheckedBags": {
+            "$ref": "#/components/schemas/amadeus.CheckedBags"
+          },
+          "segmentId": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Fee": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.FlightOffer": {
+        "type": "object",
+        "properties": {
+          "choiceProbability": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instantTicketingRequired": {
+            "type": "boolean"
+          },
+          "itineraries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Itinerary"
+            }
+          },
+          "lastTicketingDate": {
+            "type": "string"
+          },
+          "nonHomogeneous": {
+            "type": "boolean"
+          },
+          "numberOfBookableSeats": {
+            "type": "integer"
+          },
+          "oneWay": {
+            "type": "boolean"
+          },
+          "price": {
+            "$ref": "#/components/schemas/amadeus.OfferPrice"
+          },
+          "pricingOptions": {
+            "$ref": "#/components/schemas/amadeus.PricingOptions"
+          },
+          "source": {
+            "type": "string"
+          },
+          "travelerPricings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.TravelerPricing"
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "validatingAirlineCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "amadeus.FlightOrder": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Contact"
+            }
+          },
+          "flightOffers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "queuingOfficeId": {
+            "type": "string"
+          },
+          "remarks": {
+            "$ref": "#/components/schemas/amadeus.Remarks"
+          },
+          "travelers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Traveler"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.GeneralRemark": {
+        "type": "object",
+        "properties": {
+          "subType": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Itinerary": {
+        "type": "object",
+        "properties": {
+          "duration": {
+            "type": "string"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Segment"
+            }
+          }
+        }
+      },
+      "amadeus.Money": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Name": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.OfferPrice": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Fee"
+            }
+          },
+          "grandTotal": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.OperatingInfo": {
+        "type": "object",
+        "properties": {
+          "carrierCode": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Phone": {
+        "type": "object",
+        "properties": {
+          "countryCallingCode": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.PostalAddress": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "postalBox": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "stateName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.PricingOptions": {
+        "type": "object",
+        "properties": {
+          "fareType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includedCheckedBagsOnly": {
+            "type": "boolean"
+          }
+        }
+      },
+      "amadeus.PricingRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.PricingRequestData"
+          }
+        }
+      },
+      "amadeus.PricingRequestData": {
+        "type": "object",
+        "required": [
+          "flightOffers",
+          "type"
+        ],
+        "properties": {
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Remarks": {
+        "type": "object",
+        "properties": {
+          "general": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.GeneralRemark"
+            }
+          }
+        }
+      },
+      "amadeus.SeatCoordinate": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          }
+        }
+      },
+      "amadeus.SeatInfo": {
+        "type": "object",
+        "properties": {
+          "cabin": {
+            "type": "string"
+          },
+          "characteristicsCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/amadeus.SeatCoordinate"
+          },
+          "number": {
+            "type": "string"
+          },
+          "travelerPricing": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.SeatPricing"
+            }
+          }
+        }
+      },
+      "amadeus.SeatPricing": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "$ref": "#/components/schemas/amadeus.Money"
+          },
+          "seatAvailabilityStatus": {
+            "type": "string"
+          },
+          "travelerId": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Seatmap": {
+        "type": "object",
+        "properties": {
+          "aircraft": {
+            "$ref": "#/components/schemas/amadeus.AircraftInfo"
+          },
+          "aircraftCabinAmenities": {
+            "$ref": "#/components/schemas/amadeus.Amenities"
+          },
+          "arrival": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "carrierCode": {
+            "type": "string"
+          },
+          "decks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Deck"
+            }
+          },
+          "departure": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "flightOfferId": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "segmentId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.SeatmapRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amadeus.SeatmapRequestData"
+          }
+        }
+      },
+      "amadeus.SeatmapRequestData": {
+        "type": "object",
+        "required": [
+          "flightOffers"
+        ],
+        "properties": {
+          "flightOffers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FlightOffer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Segment": {
+        "type": "object",
+        "properties": {
+          "aircraft": {
+            "$ref": "#/components/schemas/amadeus.AircraftInfo"
+          },
+          "arrival": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "blacklistedInEU": {
+            "type": "boolean"
+          },
+          "carrierCode": {
+            "type": "string"
+          },
+          "departure": {
+            "$ref": "#/components/schemas/amadeus.Endpoint"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "numberOfStops": {
+            "type": "integer"
+          },
+          "operating": {
+            "$ref": "#/components/schemas/amadeus.OperatingInfo"
+          }
+        }
+      },
+      "amadeus.TicketingAgreement": {
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "type": "string"
+          },
+          "delay": {
+            "type": "string"
+          },
+          "option": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.Traveler": {
+        "type": "object",
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/amadeus.Contact"
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.Document"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/amadeus.TravelerName"
+          }
+        }
+      },
+      "amadeus.TravelerName": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "amadeus.TravelerPricing": {
+        "type": "object",
+        "properties": {
+          "fareDetailsBySegment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/amadeus.FareDetail"
+            }
+          },
+          "fareOption": {
+            "type": "string"
+          },
+          "price": {
+            "$ref": "#/components/schemas/amadeus.Money"
+          },
+          "travelerId": {
+            "type": "string"
+          },
+          "travelerType": {
+            "type": "string"
+          }
+        }
+      },
+      "auth.RefreshTokenRequest": {
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        }
+      },
+      "auth.TokenPairResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          }
+        }
+      },
+      "errors.ErrorInfo": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "details": {},
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "retry_after": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "errors.Links": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string"
+          },
+          "last": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          },
+          "prev": {
+            "type": "string"
+          },
+          "self": {
+            "type": "string"
+          }
+        }
+      },
+      "errors.Meta": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "$ref": "#/components/schemas/errors.Links"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          }
+        }
+      },
+      "errors.Response": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "error": {
+            "$ref": "#/components/schemas/errors.ErrorInfo"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/errors.Meta"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "finance.CreatePaymentRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "description",
+          "payment_method",
+          "title"
+        ],
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "payment_method": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "finance.CreateTopupRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "payment_method"
+        ],
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "payment_method": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "finance.InquiryRequest": {
+        "type": "object",
+        "required": [
+          "account_number",
+          "bank_code"
+        ],
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "bank_code": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "finance.Payment": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "amount_to_pay": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expired_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "invoice_id": {
+            "type": "string"
+          },
+          "invoice_number": {
+            "type": "string"
+          },
+          "paid_at": {
+            "type": "string"
+          },
+          "payment_method": {
+            "type": "string"
+          },
+          "qris_string": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "va_number": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.Wallet": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "wallet_id": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.WalletTopup": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "paid_at": {
+            "type": "string"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/finance.Payment"
+          },
+          "payment_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "wallet_id": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.WalletTransaction": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "balance_after": {
+            "type": "integer"
+          },
+          "balance_before": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "reference_id": {
+            "type": "string"
+          },
+          "reference_type": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "wallet_id": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.WebhookData": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "amount_unique": {
+            "type": "integer"
+          },
+          "disbursement_id": {
+            "description": "Disbursement (withdraw) callback fields.",
+            "type": "string"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "invoice_id": {
+            "type": "string"
+          },
+          "invoice_number": {
+            "type": "string"
+          },
+          "paid_at": {
+            "type": "string"
+          },
+          "payment_channel": {
+            "type": "string"
+          },
+          "processed_at": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.WebhookPayload": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/finance.WebhookData"
+          },
+          "event": {
+            "type": "string"
+          },
+          "timestamp": {}
+        }
+      },
+      "finance.Withdraw": {
+        "type": "object",
+        "properties": {
+          "account_name": {
+            "type": "string"
+          },
+          "account_number": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "bank_code": {
+            "type": "string"
+          },
+          "bank_name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "disbursement_id": {
+            "type": "string"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "fee": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "processed_at": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "wallet_id": {
+            "type": "string"
+          }
+        }
+      },
+      "finance.WithdrawRequest": {
+        "type": "object",
+        "required": [
+          "account_name",
+          "account_number",
+          "amount",
+          "bank_code"
+        ],
+        "properties": {
+          "account_name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "account_number": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "bank_code": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "health.CheckResult": {
+        "type": "object",
+        "properties": {
+          "details": {},
+          "message": {
+            "type": "string"
+          },
+          "response_time": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/health.CheckStatus"
+          }
+        }
+      },
+      "health.CheckStatus": {
+        "type": "string",
+        "enum": [
+          "pass",
+          "warn",
+          "fail"
+        ],
+        "x-enum-varnames": [
+          "CheckPass",
+          "CheckWarn",
+          "CheckFail"
+        ]
+      },
+      "health.HealthResponse": {
+        "type": "object",
+        "properties": {
+          "checks": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/health.CheckResult"
+            }
+          },
+          "environment": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/health.HealthStatus"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "health.HealthStatus": {
+        "type": "string",
+        "enum": [
+          "healthy",
+          "degraded",
+          "unhealthy"
+        ],
+        "x-enum-varnames": [
+          "StatusHealthy",
+          "StatusDegraded",
+          "StatusUnhealthy"
+        ]
+      },
+      "hotel.AssociatedRecord": {
+        "type": "object",
+        "properties": {
+          "originSystemCode": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.BookingData": {
+        "type": "object",
+        "required": [
+          "guests",
+          "offerId"
+        ],
+        "properties": {
+          "guests": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/hotel.Guest"
+            }
+          },
+          "offerId": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.Payment"
+            }
+          },
+          "rooms": {
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.BookingRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/hotel.BookingData"
+          }
+        }
+      },
+      "hotel.Contact": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Description": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.GeoCode": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          }
+        }
+      },
+      "hotel.Guest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/hotel.Contact"
+          },
+          "name": {
+            "$ref": "#/components/schemas/hotel.GuestName"
+          },
+          "tid": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.GuestName": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelOffer": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "hotel": {
+            "$ref": "#/components/schemas/hotel.HotelSummary"
+          },
+          "offers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.Offer"
+            }
+          },
+          "self": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelOrder": {
+        "type": "object",
+        "properties": {
+          "associatedRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/hotel.AssociatedRecord"
+            }
+          },
+          "bookingStatus": {
+            "type": "string"
+          },
+          "guests": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "hotel": {
+            "$ref": "#/components/schemas/hotel.HotelSummary"
+          },
+          "hotelOffer": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.HotelSummary": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "object"
+          },
+          "chainCode": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "object"
+          },
+          "dupeId": {
+            "type": "integer"
+          },
+          "geoCode": {
+            "$ref": "#/components/schemas/hotel.GeoCode"
+          },
+          "hotelId": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "lastUpdate": {
+            "type": "string"
+          },
+          "masterChainCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Offer": {
+        "type": "object",
+        "properties": {
+          "checkInDate": {
+            "type": "string"
+          },
+          "checkOutDate": {
+            "type": "string"
+          },
+          "guests": {
+            "$ref": "#/components/schemas/hotel.OfferGuests"
+          },
+          "id": {
+            "type": "string"
+          },
+          "policies": {
+            "$ref": "#/components/schemas/hotel.Policies"
+          },
+          "price": {
+            "$ref": "#/components/schemas/hotel.OfferPrice"
+          },
+          "rateCode": {
+            "type": "string"
+          },
+          "room": {
+            "$ref": "#/components/schemas/hotel.RoomInfo"
+          }
+        }
+      },
+      "hotel.OfferGuests": {
+        "type": "object",
+        "properties": {
+          "adults": {
+            "type": "integer"
+          }
+        }
+      },
+      "hotel.OfferPrice": {
+        "type": "object",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "total": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Payment": {
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/hotel.PaymentCard"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "method": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.PaymentCard": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "expiryDate": {
+            "type": "string"
+          },
+          "holderName": {
+            "type": "string"
+          },
+          "vendorCode": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.Policies": {
+        "type": "object",
+        "properties": {
+          "paymentType": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.RoomInfo": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/hotel.Description"
+          },
+          "type": {
+            "type": "string"
+          },
+          "typeEstimated": {
+            "$ref": "#/components/schemas/hotel.TypeEst"
+          }
+        }
+      },
+      "hotel.SentimentResponse": {
+        "type": "object",
+        "properties": {
+          "hotelId": {
+            "type": "string"
+          },
+          "numberOfReviews": {
+            "type": "integer"
+          },
+          "overall": {
+            "type": "integer"
+          },
+          "sentiment": {
+            "type": "object"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "hotel.TypeEst": {
+        "type": "object",
+        "properties": {
+          "bedType": {
+            "type": "string"
+          },
+          "beds": {
+            "type": "integer"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.AirlineResponse": {
+        "type": "object",
+        "properties": {
+          "businessName": {
+            "type": "string"
+          },
+          "commonName": {
+            "type": "string"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "icaoCode": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationAddress": {
+        "type": "object",
+        "properties": {
+          "cityCode": {
+            "type": "string"
+          },
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "countryName": {
+            "type": "string"
+          },
+          "regionCode": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationGeoCode": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          }
+        }
+      },
+      "locations.LocationResponse": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/locations.LocationAddress"
+          },
+          "analytics": {
+            "type": "object"
+          },
+          "detailedName": {
+            "type": "string"
+          },
+          "geoCode": {
+            "$ref": "#/components/schemas/locations.LocationGeoCode"
+          },
+          "iataCode": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "number"
+          },
+          "self": {
+            "$ref": "#/components/schemas/locations.LocationSelf"
+          },
+          "subType": {
+            "type": "string"
+          },
+          "timeZoneOffset": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "locations.LocationSelf": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "sayabayar.Bank": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "isEwallet": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "popular": {
+            "type": "boolean"
+          }
+        }
+      },
+      "sayabayar.Inquiry": {
+        "type": "object",
+        "properties": {
+          "account_name": {
+            "type": "string"
+          },
+          "account_number": {
+            "type": "string"
+          },
+          "bank_code": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Address": {
+        "type": "object",
+        "properties": {
+          "cityName": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "line": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Agency": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.Contacts"
+            }
+          }
+        }
+      },
+      "transfer.ConnectedSegment": {
+        "type": "object",
+        "properties": {
+          "arrival": {
+            "$ref": "#/components/schemas/transfer.SegmentEndpoint"
+          },
+          "departure": {
+            "$ref": "#/components/schemas/transfer.SegmentEndpoint"
+          },
+          "transportationNumber": {
+            "type": "string"
+          },
+          "transportationType": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Contacts": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.Offer": {
+        "type": "object",
+        "properties": {
+          "distance": {
+            "type": "object"
+          },
+          "end": {
+            "type": "object"
+          },
+          "extraServices": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "passengerCharacteristics": {
+            "type": "object"
+          },
+          "quotation": {
+            "type": "object"
+          },
+          "serviceProvider": {
+            "type": "object"
+          },
+          "start": {
+            "type": "object"
+          },
+          "stops": {
+            "type": "object"
+          },
+          "transferType": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "object"
+          }
+        }
+      },
+      "transfer.Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.OrderTransfer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderData": {
+        "type": "object",
+        "required": [
+          "passengers"
+        ],
+        "properties": {
+          "agency": {
+            "$ref": "#/components/schemas/transfer.Agency"
+          },
+          "flightNumber": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "passengers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/transfer.OrderPassenger"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderPassenger": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/transfer.Contacts"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.OrderRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/transfer.OrderData"
+          }
+        }
+      },
+      "transfer.OrderTransfer": {
+        "type": "object",
+        "properties": {
+          "confirmNbr": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "object"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "end": {
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "quotation": {
+            "type": "object"
+          },
+          "start": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          },
+          "vehicle": {
+            "type": "object"
+          }
+        }
+      },
+      "transfer.PassengerCharacteristic": {
+        "type": "object",
+        "properties": {
+          "age": {
+            "type": "integer"
+          },
+          "passengerTypeCode": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.SearchRequest": {
+        "type": "object",
+        "required": [
+          "passengers",
+          "startDateTime",
+          "startLocationCode",
+          "transferType"
+        ],
+        "properties": {
+          "endAddress": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "endCityName": {
+            "type": "string"
+          },
+          "endConnectedSegment": {
+            "$ref": "#/components/schemas/transfer.ConnectedSegment"
+          },
+          "endCountryCode": {
+            "type": "string"
+          },
+          "endGeoCode": {
+            "type": "string"
+          },
+          "endLocationCode": {
+            "type": "string"
+          },
+          "endName": {
+            "type": "string"
+          },
+          "endZipCode": {
+            "type": "string"
+          },
+          "passengerCharacteristics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.PassengerCharacteristic"
+            }
+          },
+          "passengers": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "providerCodes": {
+            "type": "string"
+          },
+          "startConnectedSegment": {
+            "$ref": "#/components/schemas/transfer.ConnectedSegment"
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "startLocationCode": {
+            "type": "string"
+          },
+          "stopOvers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transfer.StopOver"
+            }
+          },
+          "transferType": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.SegmentEndpoint": {
+        "type": "object",
+        "properties": {
+          "localDateTime": {
+            "type": "string"
+          },
+          "locationCode": {
+            "type": "string"
+          }
+        }
+      },
+      "transfer.StopOver": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/transfer.Address"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          },
+          "locationCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sequenceNumber": {
+            "type": "integer"
+          }
+        }
+      },
+      "trip.Analytics": {
+        "type": "object",
+        "properties": {
+          "confidence": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          }
+        }
+      },
+      "trip.Links": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "string"
+          }
+        }
+      },
+      "trip.TripPurposeResponse": {
+        "type": "object",
+        "properties": {
+          "analytics": {
+            "$ref": "#/components/schemas/trip.Analytics"
+          },
+          "links": {
+            "$ref": "#/components/schemas/trip.Links"
+          },
+          "result": {
+            "type": "string"
+          },
+          "subType": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "user.AuthResponse": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/user.UserResponse"
+          }
+        }
+      },
+      "user.LoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "user.RegisterRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "name",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6
+          }
+        }
+      },
+      "user.UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          }
+        }
+      },
+      "user.UserListResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/user.UserResponse"
+            }
+          }
+        }
+      },
+      "user.UserResponse": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

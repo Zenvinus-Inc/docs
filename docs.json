@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Trevora API",
+  "name": "API Reference",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -12,14 +12,19 @@
     "pages": [
       {
         "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
+        "pages": ["index", "quickstart"]
       },
       {
-        "group": "API Reference",
-        "openapi": "api-reference/openapi.json"
+        "group": "Basic API",
+        "openapi": "api-reference/basic.json"
+      },
+      {
+        "group": "Finance API",
+        "openapi": "api-reference/finance.json"
+      },
+      {
+        "group": "Booking API",
+        "openapi": "api-reference/booking.json"
       }
     ],
     "global": {
