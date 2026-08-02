@@ -94,7 +94,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Create flight order (Amadeus Flight Create Orders)",
         "requestBody": {
           "required": true,
@@ -175,7 +177,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Get flight order (Amadeus Flight Order Management)",
         "parameters": [
           {
@@ -237,7 +241,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Cancel flight order (Amadeus Flight Order Management)",
         "parameters": [
           {
@@ -290,7 +296,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel ratings / sentiments (Amadeus Hotel Ratings)",
         "parameters": [
@@ -369,7 +375,7 @@
           }
         ],
         "tags": [
-          "market-insights"
+          "travel"
         ],
         "summary": "Location score (Amadeus Location Score)",
         "parameters": [
@@ -725,7 +731,7 @@
           }
         ],
         "tags": [
-          "locations"
+          "travel"
         ],
         "summary": "Airline lookup by IATA codes (Amadeus Airline Code Lookup)",
         "parameters": [
@@ -804,7 +810,7 @@
           }
         ],
         "tags": [
-          "locations"
+          "travel"
         ],
         "summary": "Airport & city search (Amadeus Airport & City Search)",
         "parameters": [
@@ -953,7 +959,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel list by city (Amadeus Hotel List)",
         "parameters": [
@@ -1059,7 +1065,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel list by geocode (Amadeus Hotel List)",
         "parameters": [
@@ -1165,7 +1171,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel list by IDs (Amadeus Hotel List)",
         "parameters": [
@@ -1244,7 +1250,7 @@
           }
         ],
         "tags": [
-          "locations"
+          "travel"
         ],
         "summary": "Airport & city information by ID (Amadeus Airport & City Search by ID)",
         "parameters": [
@@ -1320,7 +1326,7 @@
           }
         ],
         "tags": [
-          "activities"
+          "travel"
         ],
         "summary": "Tours & activities search (Amadeus Tours and Activities)",
         "parameters": [
@@ -1417,7 +1423,7 @@
           }
         ],
         "tags": [
-          "activities"
+          "travel"
         ],
         "summary": "Tours & activities search by bounding box (Amadeus Tours and Activities)",
         "parameters": [
@@ -1523,7 +1529,7 @@
           }
         ],
         "tags": [
-          "activities"
+          "travel"
         ],
         "summary": "Activity detail (Amadeus Tours and Activities)",
         "parameters": [
@@ -1598,7 +1604,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Price flight offers (Amadeus Flight Offers Price)",
         "requestBody": {
           "required": true,
@@ -1681,7 +1689,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Seat map display (Amadeus SeatMap Display)",
         "requestBody": {
           "required": true,
@@ -1836,7 +1846,7 @@
           }
         ],
         "tags": [
-          "market-insights"
+          "travel"
         ],
         "summary": "Most booked destinations (Amadeus Travel Recommendations - booked)",
         "parameters": [
@@ -1942,7 +1952,7 @@
           }
         ],
         "tags": [
-          "market-insights"
+          "travel"
         ],
         "summary": "Most traveled destinations (Amadeus Travel Recommendations - traveled)",
         "parameters": [
@@ -2039,7 +2049,7 @@
           }
         ],
         "tags": [
-          "trip"
+          "travel"
         ],
         "summary": "Trip purpose prediction (Amadeus Trip Purpose Prediction)",
         "parameters": [
@@ -2151,7 +2161,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Create hotel booking (Amadeus Hotel Booking)",
         "requestBody": {
@@ -2225,7 +2235,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Search flight offers (Amadeus Flight Offers Search)",
         "parameters": [
           {
@@ -2388,7 +2400,9 @@
             "BearerAuth": []
           }
         ],
-        "tags": [],
+        "tags": [
+          "flights"
+        ],
         "summary": "Flight choice prediction (Amadeus Flight Choice Prediction)",
         "requestBody": {
           "required": true,
@@ -2465,7 +2479,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel offers search (Amadeus Hotel Search)",
         "parameters": [
@@ -2607,7 +2621,7 @@
           }
         ],
         "tags": [
-          "hotel"
+          "hotels"
         ],
         "summary": "Hotel offer detail (Amadeus Hotel Search)",
         "parameters": [
@@ -2679,7 +2693,9 @@
       "get": {
         "summary": "Flight Cheapest Date Search",
         "operationId": "amadeus-flight_cheapest_date_search",
-        "tags": [],
+        "tags": [
+          "travel"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -4292,7 +4308,9 @@
         "summary": "Flight Inspiration Search",
         "description": "Search for flight destinations based on origin location",
         "operationId": "amadeus-flight-destinations-search",
-        "tags": [],
+        "tags": [
+          "travel"
+        ],
         "security": [
           {
             "bearerAuth": []
