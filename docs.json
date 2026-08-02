@@ -12,18 +12,22 @@
     "pages": [
       {
         "group": "Getting Started",
+        "icon": "rocket",
         "pages": ["index", "quickstart"]
       },
       {
         "group": "Basic API",
+        "icon": "key-round",
         "openapi": "api-reference/basic.json"
       },
       {
         "group": "Finance API",
+        "icon": "wallet",
         "openapi": "api-reference/finance.json"
       },
       {
         "group": "Booking API",
+        "icon": "plane",
         "openapi": "api-reference/booking.json"
       }
     ],
